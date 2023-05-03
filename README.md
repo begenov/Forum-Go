@@ -34,7 +34,3 @@ or
 
 The web forum should now be accessible by visiting localhost:8080 in your web browser.
 
-# Audit check
-
-### [Check it out](https://github.com/01-edu/public/tree/master/subjects/forum/audit)  
-
