@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="UTF-8">
+    <title>Forum</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <!-- Latest compiled and minified CSS -->
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
+  
+    <!-- Optional theme -->
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap-theme.min.css" integrity="sha384-rHyoN1iRsVXV4nD0JutlnGaslCJuC7uwjduW9SVrLvRYooPp2bWYgmgJQIXwl/Sp" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+  </head>
+    <body>
+      
+      <nav class="navbar navbar-default" role="navigation">
+        <div class="container-fluid">
+          <div class="navbar-header">
+            <button type="button" class="navbar-toggle" data-toggle="collapse"
+             data-target="#bs-example-navbar-collapse-1">
+             <span class="sr-only">ttt</span>
+             <span class="icon-bar"></span>
+             <span class="icon-bar"></span>
+             <span class="icon-bar"></span>
+            </button>
+          <a href="/" class="navbar-brand">Forum</a>
+          </div>
+
+        
+            {{if .Post}}
+              <ul class="navbar-brand">Title: {{.Post.Title}}</ul>
+              <ul class="navbar-brand">By: {{.Post.Author}}</ul>
+            {{end}}
+        
+
+          <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
+          <ul class="nav navbar-nav navbar-right">
+          
+                  
+            {{if .IsAuthenticated}}
+            <li class="dropdown">
+              <a href="/" class="dropdown-toggle" data-toggle="dropdown">{{.User}} <b class="caret"></b></a>
+              <ul class="dropdown-menu">
+                <li class="dropdown-header">Alem</li>
+                <li class="active"><a href="/post/create">Create-Post</a></li> 
+                <li><a href="/post/mylikedpost">My liked post</a></li>
+                <li><a href="/post/mypost">My post</a></li>
+                <li class="divider"></li>
+                <li><a href="/auth/log-out">Log-out</a></li>
+              </ul>
+            </li>
+            {{else}}
+            <li class="dropdown">
+              <a href="/" class="dropdown-toggle" data-toggle="dropdown">Guest <b class="caret"></b></a>
+              <ul class="dropdown-menu">
+                <li class="dropdown-header">Alem</li>
+                    <li class="active"><a href="/auth/sign-in">Sign-in</a></li>
+                    <li> <a href="/auth/sign-up">Sign-up</a></li>
+              </ul>
+            </li>
+            {{end}}
+          </ul>
+        </div>
+        </div>
+      </nav>
+
+
+    {{$islike := .Post.IsLike}}
+    {{$PostID := .Post.Id}}
+
+    {{$IsAuthenticated := .IsAuthenticated}}
+
+    {{if .Post}}
+    <div class="panel panel-primary">
+      <div class="panel-heading">
+        <p>Category: {{.Post.Category}}</p>
+      <div class="panel-body">
+        Text: {{.Post.Description}}
+      </div>  
+    </div>
+    <form action="/reaction/post?postid={{.Post.Id}}" method="post">
+    {{if .IsAuthenticated}}
+      <div class="panel-body">
+
+      </div>
+      <button type="submit" {{if eq $islike  1}} class="setted" {{end}} value="like" id="isLike" name="isLike"><i  class="glyphicon glyphicon-thumbs-up">{{.Post.Likes}}</i></button>
+      <button type="submit" {{if eq $islike  0}} class="setted" {{end}} value="dislike" id="isLike" name="isLike"><i  class="glyphicon glyphicon-thumbs-down">{{.Post.Dislikes}}</i></button>
+      <div class="panel-footer">
+        Created on {{.Post.CreateAt}}
+      </div>
+      {{else}}
+      <div class="panel-body">
+        <button type="submit" {{if eq $islike  1}} class="setted" {{end}} value="like" id="isLike" name="isLike"><i  class="glyphicon glyphicon-thumbs-up">{{.Post.Likes}}</i></button>
+        <button type="submit" {{if eq $islike  0}} class="setted" {{end}} value="dislike" id="isLike" name="isLike"><i  class="glyphicon glyphicon-thumbs-down">{{.Post.Dislikes}}</i></button>
+      </div>
+      {{end}}
+    </form>
+      
+    </div>
+    {{end}}
+
+
+
+
+    <div class="panel panel-default">
+      {{if .IsAuthenticated}}
+      <form action="/post?id={{.Post.Id}}" method="post">
+        <div class="panel-heading">
+          <label for="text">Comment:</label><br>
+        </div>
+        <div class="panel-body">
+          <textarea name="comment-text" class="form-control" placeholder="Enter comment..." id="comment-text" required></textarea>
+          {{if .MsgError}}
+          <p class="help-block">{{.MsgError}}</p>
+          {{end}}
+        </div>
+        <div class="panel-footer">
+          <input type="submit" class="btn btn-primary" value="Enter">
+        </div>
+      </form>
+      {{end}}
+    </div>
+
+  <hr>    
+
+  {{range .Comment}}
+  <div class="panel panel-primary">
+    <div class="panel-heading">
+              Author: {{.Author}} 
+            </div>  
+            <div class="panel-body">
+              Text: {{.Text}} 
+            </div>
+            <form action="/reaction/comment?id={{.ID}}&postid={{$PostID}}" method="post">
+              {{if $IsAuthenticated}}
+              <div class="panel-body">
+                <div class="panel-body">
+                  <button type="submit" {{if eq .IsLike  1}} class="setted" {{end}} value="like" name="islike"> <i  class="glyphicon glyphicon-thumbs-up">{{.Likes}}</i></button>
+                  <button type="submit" {{if eq .IsLike  0}} class="setted" {{end}} value="dislike" name="islike"><i  class="glyphicon glyphicon-thumbs-down">{{.Dislikes}}</i></button>
+                </div>
+              </div>
+              {{else}}
+              <div class="panel-body">
+                <button type="submit" {{if eq .IsLike  1}} class="setted" {{end}} value="like" name="islike"> <i  class="glyphicon glyphicon-thumbs-up">{{.Likes}}</i></button>
+                <button type="submit" {{if eq .IsLike  0}} class="setted" {{end}} value="dislike" name="islike"><i  class="glyphicon glyphicon-thumbs-down">{{.Dislikes}}</i></button>
+              </div>
+              {{end}}
+            </form>
+              <div class="panel-footer">
+                {{.Date}} 
+              </div>
+            
+          
+        </div>
+        {{end}}
+
+
+  
+
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.0/jquery.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@3.3.7/dist/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>
+
+
+  </body>
+</html>

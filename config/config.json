@@ -1,0 +1,9 @@
+{
+    "database":{
+        "driver":"sqlite3",
+        "dsn":"forum.db"
+    },
+    "server":{
+        "addr":"8080"
+    }
+}
